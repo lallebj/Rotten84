@@ -32,21 +32,53 @@ public class MainActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
         View retView = inflater.inflate(R.layout.activity_main_fragment, container);
-        moviesRepository = MoviesRepository.getInstance();
 
-        RecyclerView moviesList = (RecyclerView) retView.findViewById(R.id.movies_list);
+
+
+
 
         moviesList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        moviesList = (RecyclerView) retView.findViewById(R.id.movies_list);
 
+        moviesRepository = MoviesRepository.getInstance();
+
+        getGenres();
+
+        /*//if (adapter == null) {
+            adapter = new MoviesAdapter(movies, movieGenres);
+            moviesList.setAdapter(adapter);
+            moviesList.setItemAnimator(new DefaultItemAnimator());
+        } else {
+            adapter.appendMovies(movies);
+        }*/
 
 
         //MoviesAdapter adapter = new MoviesAdapter();
         //moviesList.setAdapter(adapter);
         //moviesList.setItemAnimator(new DefaultItemAnimator());
-        getGenres();
+
 
 
         return retView;
+    }
+
+    private void setupOnScrollListener() {
+        final LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+        moviesList.setLayoutManager(manager);
+        moviesList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                int totalItemCount = manager.getItemCount();
+                int visibleItemCount = manager.getChildCount();
+                int firstVisibleItem = manager.findFirstVisibleItemPosition();
+
+                if (firstVisibleItem + visibleItemCount >= totalItemCount / 2) {
+                    if (!isFetchingMovies) {
+                        getMovies(currentPage + 1);
+                    }
+                }
+            }
+        });
     }
 
     private void getGenres() {
@@ -68,14 +100,19 @@ public class MainActivityFragment extends Fragment {
         isFetchingMovies = true;
         moviesRepository.getMovies(page, new OnGetMoviesCallback() {
             @Override
-            public void onSuccess(int page, List<Movie> movies) {
+            public void onSuccess(int page, List<Movie> movie) {
                 Log.d("MoviesRepository", "Current Page = " + page);
+                //movies = movie;
                 if (adapter == null) {
                     adapter = new MoviesAdapter(movies, movieGenres);
                     moviesList.setAdapter(adapter);
+                    moviesList.setItemAnimator(new DefaultItemAnimator());
                 } else {
                     adapter.appendMovies(movies);
                 }
+
+
+
                 currentPage = page;
                 isFetchingMovies = false;
             }
@@ -86,6 +123,10 @@ public class MainActivityFragment extends Fragment {
             }
         });
     }
+
+    /*private void showError() {
+        Toast.makeText(MainActivity., "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+    }*/
 
 
 }
