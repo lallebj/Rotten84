@@ -11,7 +11,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private RecyclerView moviesList;
+    /*private RecyclerView moviesList;
     private MoviesAdapter adapter;
 
     private MoviesRepository moviesRepository;
@@ -19,23 +19,24 @@ public class MainActivity extends AppCompatActivity {
     private List<Genre> movieGenres;
 
     private boolean isFetchingMovies;
-    private int currentPage = 1;
+    private int currentPage = 1;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_fragment);
-
+        setContentView(R.layout.multiple_activity_fragment);
+/*
         moviesRepository = MoviesRepository.getInstance();
 
         moviesList = findViewById(R.id.movies_list);
-        moviesList.setLayoutManager(new LinearLayoutManager(this));
+        //moviesList.setLayoutManager(new LinearLayoutManager(this));
 
         setupOnScrollListener();
 
-        getGenres();
-    }
+        getGenres();*/
 
+    }
+/*
     private void setupOnScrollListener() {
         final LinearLayoutManager manager = new LinearLayoutManager(this);
         moviesList.setLayoutManager(manager);
@@ -96,5 +97,5 @@ public class MainActivity extends AppCompatActivity {
 
     private void showError() {
         Toast.makeText(MainActivity.this, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
-    }
+    }*/
 }

@@ -35,16 +35,17 @@ public class MainActivityFragment extends Fragment {
 
 
 
-
-
-        moviesList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        moviesList = (RecyclerView) retView.findViewById(R.id.movies_list);
-
         moviesRepository = MoviesRepository.getInstance();
 
-        getGenres();
 
-        /*//if (adapter == null) {
+        moviesList = (RecyclerView) retView.findViewById(R.id.movies_list);
+        moviesList.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+
+        getGenres();
+        /*adapter = new MoviesAdapter(movies, movieGenres);
+        moviesList.setAdapter(adapter);
+        if (adapter == null) {
             adapter = new MoviesAdapter(movies, movieGenres);
             moviesList.setAdapter(adapter);
             moviesList.setItemAnimator(new DefaultItemAnimator());
@@ -52,7 +53,7 @@ public class MainActivityFragment extends Fragment {
             adapter.appendMovies(movies);
         }*/
 
-
+        setupOnScrollListener();
         //MoviesAdapter adapter = new MoviesAdapter();
         //moviesList.setAdapter(adapter);
         //moviesList.setItemAnimator(new DefaultItemAnimator());
@@ -62,7 +63,7 @@ public class MainActivityFragment extends Fragment {
         return retView;
     }
 
-    private void setupOnScrollListener() {
+   private void setupOnScrollListener() {
         final LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         moviesList.setLayoutManager(manager);
         moviesList.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -83,26 +84,30 @@ public class MainActivityFragment extends Fragment {
 
     private void getGenres() {
         moviesRepository.getGenres(new OnGetGenresCallback() {
+
             @Override
             public void onSuccess(List<Genre> genres) {
+
                 movieGenres = genres;
                 getMovies(currentPage);
             }
 
             @Override
             public void onError() {
-               // showError();
+               showError();
             }
+
+
         });
+
     }
 
     private void getMovies(int page) {
         isFetchingMovies = true;
         moviesRepository.getMovies(page, new OnGetMoviesCallback() {
             @Override
-            public void onSuccess(int page, List<Movie> movie) {
+            public void onSuccess(int page, List<Movie> movies) {
                 Log.d("MoviesRepository", "Current Page = " + page);
-                //movies = movie;
                 if (adapter == null) {
                     adapter = new MoviesAdapter(movies, movieGenres);
                     moviesList.setAdapter(adapter);
@@ -110,23 +115,20 @@ public class MainActivityFragment extends Fragment {
                 } else {
                     adapter.appendMovies(movies);
                 }
-
-
-
                 currentPage = page;
                 isFetchingMovies = false;
             }
 
             @Override
             public void onError() {
-               // showError();
+                showError();
             }
         });
     }
 
-    /*private void showError() {
-        Toast.makeText(MainActivity., "Please check your internet connection.", Toast.LENGTH_SHORT).show();
-    }*/
+    private void showError() {
+        Toast.makeText(getActivity(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+    }
 
 
 }
