@@ -39,29 +39,43 @@ public class MoviesRepository {
         return repository;
     }
 
-    public void getMovies(int page, final OnGetMoviesCallback callback) {
-        Log.d("MoviesRepository", "Next Page = " + page);
-        api.getPopularMovies(BuildConfig.ApiKey, LANGUAGE, page)
-                .enqueue(new Callback<MoviesResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<MoviesResponse> call, @NonNull Response<MoviesResponse> response) {
-                        if (response.isSuccessful()) {
-                            MoviesResponse moviesResponse = response.body();
-                            if (moviesResponse != null && moviesResponse.getMovies() != null) {
-                                callback.onSuccess(moviesResponse.getPage(), moviesResponse.getMovies());
-                            } else {
-                                callback.onError();
-                            }
-                        } else {
-                            callback.onError();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<MoviesResponse> call, Throwable t) {
+    public void getMovies(int page, String sortBy, final OnGetMoviesCallback callback) {
+        Callback<MoviesResponse> call = new Callback<MoviesResponse>() {
+            @Override
+            public void onResponse(Call<MoviesResponse> call, Response<MoviesResponse> response) {
+                if (response.isSuccessful()) {
+                    MoviesResponse moviesResponse = response.body();
+                    if (moviesResponse != null && moviesResponse.getMovies() != null) {
+                        callback.onSuccess(moviesResponse.getPage(), moviesResponse.getMovies());
+                    } else {
                         callback.onError();
                     }
-                });
+                } else {
+                    callback.onError();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MoviesResponse> call, Throwable t) {
+                callback.onError();
+            }
+        };
+
+        switch (sortBy) {
+            case TOP_RATED:
+                api.getTopRatedMovies(BuildConfig.ApiKey, LANGUAGE, page)
+                        .enqueue(call);
+                break;
+            case UPCOMING:
+                api.getUpcomingMovies(BuildConfig.ApiKey, LANGUAGE, page)
+                        .enqueue(call);
+                break;
+            case POPULAR:
+            default:
+                api.getPopularMovies(BuildConfig.ApiKey, LANGUAGE, page)
+                        .enqueue(call);
+                break;
+        }
     }
 
     public void getGenres(final OnGetGenresCallback callback) {

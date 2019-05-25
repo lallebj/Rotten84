@@ -48,6 +48,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         notifyDataSetChanged();
     }
 
+    public void clearMovies() {
+        movies.clear();
+        notifyDataSetChanged();
+    }
+
     class MovieViewHolder extends RecyclerView.ViewHolder {
         TextView releaseDate;
         TextView title;
@@ -88,5 +93,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
             }
             return TextUtils.join(", ", movieGenres);
         }
+
     }
 }

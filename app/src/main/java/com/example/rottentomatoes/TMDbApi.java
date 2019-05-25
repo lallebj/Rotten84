@@ -14,6 +14,7 @@ public interface TMDbApi {
             @Query("page") int page
     );
 
+
     @GET("movie/top_rated")
     Call<MoviesResponse> getTopRatedMovies(
             @Query("api_key") String apiKey,
@@ -40,6 +41,8 @@ public interface TMDbApi {
             @Query("api_key") String apiKey,
             @Query("language") String language
     );
+
+
 
 
 
