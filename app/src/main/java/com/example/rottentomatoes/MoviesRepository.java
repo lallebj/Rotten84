@@ -17,6 +17,7 @@ public class MoviesRepository {
     public static final String POPULAR = "popular";
     public static final String TOP_RATED = "top_rated";
     public static final String UPCOMING = "upcoming";
+    public static final String FAVORITES = "favorites";
 
     private static MoviesRepository repository;
 
@@ -75,8 +76,11 @@ public class MoviesRepository {
                 api.getPopularMovies(BuildConfig.ApiKey, LANGUAGE, page)
                         .enqueue(call);
                 break;
+            case FAVORITES:
+
         }
     }
+
 
     public void getGenres(final OnGetGenresCallback callback) {
         api.getGenres(BuildConfig.ApiKey, LANGUAGE)
@@ -97,6 +101,78 @@ public class MoviesRepository {
 
                     @Override
                     public void onFailure(Call<GenresResponse> call, Throwable t) {
+                        callback.onError();
+                    }
+                });
+    }
+
+    public void getMovie(int movieId, final OnGetMovieCallback callback) {
+        api.getMovie(movieId, BuildConfig.ApiKey, LANGUAGE)
+                .enqueue(new Callback<Movie>() {
+                    @Override
+                    public void onResponse(Call<Movie> call, Response<Movie> response) {
+                        if (response.isSuccessful()) {
+                            Movie movie = response.body();
+                            if (movie != null) {
+                                callback.onSuccess(movie);
+                            } else {
+                                callback.onError();
+                            }
+                        } else {
+                            callback.onError();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Movie> call, Throwable t) {
+                        callback.onError();
+                    }
+                });
+    }
+
+    public void getTrailers(int movieId, final OnGetTrailersCallback callback) {
+        api.getTrailers(movieId, BuildConfig.ApiKey, LANGUAGE)
+                .enqueue(new Callback<TrailerResponse>() {
+                    @Override
+                    public void onResponse(Call<TrailerResponse> call, Response<TrailerResponse> response) {
+                        if (response.isSuccessful()) {
+                            TrailerResponse trailerResponse = response.body();
+                            if (trailerResponse != null && trailerResponse.getTrailers() != null) {
+                                callback.onSuccess(trailerResponse.getTrailers());
+                            } else {
+                                callback.onError();
+                            }
+                        } else {
+                            callback.onError();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<TrailerResponse> call, Throwable t) {
+                        callback.onError();
+                    }
+                });
+    }
+
+    public void getReviews(int movieId, final OnGetReviewsCallback callback) {
+        api.getReviews(movieId, BuildConfig.ApiKey, LANGUAGE)
+                .enqueue(new Callback<ReviewResponse>() {
+                    @Override
+                    public void onResponse(Call<ReviewResponse> call, Response<ReviewResponse> response) {
+                        if (response.isSuccessful()) {
+                            ReviewResponse reviewResponse = response.body();
+                            if (reviewResponse != null && reviewResponse.getReviews() != null) {
+                                callback.onSuccess(reviewResponse.getReviews());
+                            } else {
+                                callback.onError();
+                            }
+                        } else {
+                            callback.onError();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ReviewResponse> call, Throwable t) {
                         callback.onError();
                     }
                 });

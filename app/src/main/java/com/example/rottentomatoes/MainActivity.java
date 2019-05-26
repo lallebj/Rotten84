@@ -1,5 +1,7 @@
 package com.example.rottentomatoes;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.multiple_activity_fragment);
+
+
 /*
         moviesRepository = MoviesRepository.getInstance();
 
@@ -39,6 +43,15 @@ public class MainActivity extends AppCompatActivity {
         getGenres();*/
 
     }
+    OnMoviesClickCallback callback = new OnMoviesClickCallback() {
+        @Override
+        public void onClick(Movie movie) {
+
+            Intent intent = new Intent(MainActivity.this, MovieActivityFragment.class);
+            intent.putExtra(MovieActivityFragment.MOVIE_ID, movie.getId());
+            startActivity(intent);
+        }
+    };
 /*
     private void setupOnScrollListener() {
         final LinearLayoutManager manager = new LinearLayoutManager(this);
